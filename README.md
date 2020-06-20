@@ -9,3 +9,7 @@ What is a xampp server?How it installed?
 
 
 Downloading sample SQLite Database
+
+
+
+what is SID.php? how to install it
