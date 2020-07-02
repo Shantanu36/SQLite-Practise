@@ -1,0 +1,443 @@
+##SELECT Statements
+
+select 'Hello World'
+
+select 'Hello World' as 'Result'
+
+select * from Playlists
+
+select * from invoices
+
+select * from Invoices order by BillingCity
+
+select CustomerId,BillingCity,BillingCountry from Invoices order by BillingCity
+
+select CustomerId,BillingCity as "Billing City",BillingCountry as "Billing Country" from Invoices order by BillingCity
+
+
+##Selecting Rows Using Where clause (Also using order by,limit and offset)
+
+select CustomerId,BillingCity as "Billing City",BillingCountry as "Billing Country" from Invoices
+where BillingCity='Berlin' order by CustomerId
+
+
+select CustomerId,BillingCity as "Billing City",BillingCountry as "Billing Country" from Invoices
+where BillingCity='Berlin' order by CustomerId limit 5  # Gets 1st 5 results
+
+select CustomerId,BillingCity as "Billing City",BillingCountry as "Billing Country" from Invoices
+where BillingCity='Berlin' order by CustomerId limit 5 offset 5 # Gets next 5 results
+
+
+## Selecting Columns
+
+select * from tracks
+
+select Composer,Bytes from tracks
+
+
+
+## Counting Rows
+
+select count(*) from tracks # Calculates all the rows including null
+
+select count(TrackId) from Tracks 
+
+select count(*) from Tracks where Milliseconds>300000
+
+select count(*) from Tracks where Milliseconds>300000 AND AlbumId<150
+
+select count (composer) from Tracks  # ommits Null values
+
+
+## Inserting Data into a table
+
+insert into playlists(PlaylistId,Name)values(19,'country music');
+select * from playlists
+
+
+## Updating Table
+
+insert into albums(Title,ArtistId)values('summer of 69',25);
+select* from albums
+update albums;
+set ArtistId=15 where Title='summer of 69'
+
+## Deleting data
+
+delete from albums where Title='summer of 69';
+select * from albums
+
+
+## Create Table in memory databases ( temporary databases ) of SQLite
+
+
+create table Temp1
+(
+id int ,
+name text,
+surname text,
+contact int
+);
+
+insert into Temp1 values(1,'shantanu','jadhav',00);
+insert into Temp1 values(2,'ishan','nardekar',01);
+insert into Temp1 values(3,'abhishek','yadav',02);
+
+select * from Temp1 
+
+
+
+## Deleting table
+drop table Temp1;
+drop table if exists Temp1
+
+
+
+## INSERTING into rows ( Trying in a Test database  of SQLite)
+
+
+
+create table Temp2
+(
+id int ,
+name text,
+surname text,
+contact int
+);
+
+insert into Temp2 values(1,'shantanu','jadhav',00);
+insert into Temp2 values(2,'ishan','nardekar',01);
+insert into Temp2 values(3,'abhishek','yadav',02);
+insert into Temp2(name,surname) values('laukik','pawar'); ## Insert only into preferred column,rest puts NULL
+
+select * from Temp2
+
+
+##Special type of insert (inserting data from another table)
+
+insert into Temp2 (id,name) select id,name from Temp1;
+select * from Temp2
+
+
+##Deleting Rows
+
+delete from Temp2 where id=3;
+
+
+##SELECT * FROM Temp2 where surname IS NULL;
+
+INSERT INTO TEMP2 values(0,NULL,NULL,'') # inserting 0,null,lack of values)
+SELECT * FROM Temp2 where surname IS NULL;
+SELECT * FROM Temp2 where surname IS NOT NULL;
+;
+
+
+
+## Introducing constraint for the Null values to be inserted in a column
+
+create table Temp3
+(
+id int,
+name char(20) Not null,
+surname char (20)
+);
+
+insert into Temp3 values (1,'shantanu','jadhav');
+insert into Temp3 values (2,'mayank','katira');
+insert into Temp3 values (1,NULL,'jadhav') # query #3: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: Temp3.name
+
+select * from Temp3
+
+
+## Adding constraint or DEFAULT values in case of Null values
+
+
+create table Temp9
+(
+id int,
+name char default 'panda',
+surname char (20)
+);
+
+insert into Temp9 values (1,'shantanu','jadhav');
+insert into Temp9 values (2,'mayank','katira');
+insert into Temp9(id,surname) values (3,'bagul'); 
+
+select * from Temp9
+
+
+## Adding UNIQUE constraint to the colummn
+
+
+create table Temp10
+(
+id int unique,
+name char default 'panda',
+surname char (20)
+);
+insert into Temp10 values (1,'shantanu','jadhav');
+insert into Temp10 values (2,'mayank','katira');
+insert into Temp10(id,surname) values (3,'bagul');
+insert into Temp10 values (1,'rohit','sawant');
+
+select * from Temp10  # Integrity constraint violation: 19 UNIQUE constraint failed: Temp10.id
+
+
+## Altering table
+
+alter table Temp2
+add city2 char default 'Panda';
+
+select * from Temp2
+
+## Creating ID column
+
+Create table Identity1
+(
+ID integer primary key,
+name char (20),
+surname char(20)
+);
+
+insert into Identity1 (name,surname) values ('shantanu','jadhav');
+insert into Identity1 (name,surname) values('abhishek','yadav');
+
+select * from Identity1
+
+
+## Filtering Data using WHERE clause
+
+select FirstName,City,Phone from customers where country = 'Brazil' and SupportRepId >3
+
+
+select FirstName,City,Phone from customers where country = 'Brazil' or supportRepId >3 order by FirstName
+
+# Like Operator
+
+select FirstName,City,Phone,country from customers where country like '%a' order by FirstName # selects countries that ends with 'A'
+
+select FirstName,City,Phone,country from customers where country like 'a%' order by FirstName
+
+select FirstName,City,Phone,country from customers where country like '_a%' order by FirstName
+
+#IN Operator
+
+select FirstName,City,Phone,country from customers where country in('Canada','Austria')
+
+
+## Selecting Distinct values from the table
+
+select distinct country from customers #selects distinct 24 rows all with different country names
+
+select distinct country,city from customers # selects disticts combination of both country and city
+
+## ORDER BY Clause with ASC & DESC
+
+select distinct country,city from customers order by Country #By default Ascending
+
+select distinct country,city from customers order by Country desc
+
+select distinct country,city from customers order by City,country # ordering in combination of both city & country
+
+
+##Understanding join and accessing related tables
+#joining track and album tables from Chinook database
+
+select t.Name,composer,a.ArtistId,t.Composer from tracks as t
+inner join albums as a on t.AlbumId=a.AlbumId
+
+
+##Joining multiple tables
+#joining albums,trcks and genre tables
+
+select t.Name,t.Composer,t.UnitPrice,G.Name,A.Title
+from tracks as t 
+join albums as A on A.AlbumId=t.AlbumId
+join genres as G on t.GenreId=G.GenreId
+order by Title
+
+## Strings
+# Finding length of the string
+
+select length('shantanu')
+select Name,length(Name) as TrackLength from Tracks order by TrackLength;
+
+# Selecting part of a string
+select substr('shantanu',3)
+select Name,substr(Name,5) as SubNames,length(substr(Name,5)) as SubNameLen from Tracks
+
+## Removing Spaces/TRIM Function
+
+select'   shantanu    '
+
+select trim('   shantanu    ')
+
+select trim('   shantanu    ')
+
+select Ltrim('   shantanu    ')
+
+select rtrim('   shantanu    ')
+#However results above cannot be seen in a queery output,to see the difference in result we have to see the html format page  by pressing ctrl+u
+
+## Converting to UPPER /LOWER cases
+
+select ('ShaNTAnu')=('SHANtANu') # FALSE
+select lower('ShaNTAnu')=lower('SHANtANu') # TRUE
+select upper('ShaNTAnu')=upper('SHANtANu') # TRUE
+select upper(Name) from Tracks
+
+
+## NUMBERS
+#TYPE OF Function
+
+select typeof('shantanu');
+select typeof(1+2=4);
+select(2.0+3);
+select(2.0+3.0);
+select typeof('panda'+'kohla') ## Integer type
+
+#Integer Divison
+select 4/2;
+select 5/2;
+select 5.0/2;
+select  5.0/2);
+select cast(5 as real)/2;
+select 5/2,5%2
+
+#Round Function
+select 2.5555; #2.5555
+select round(2.5555); #3
+select round (2.5555,2) #2.56
+
+## Date & Time for SQLite
+
+select datetime('now');
+select date('now');
+select time('now');
+select datetime('now', '+1 day');
+select datetime('now', '+7 day');
+select datetime('now', '+1 year');
+select datetime('now', '+3 hours');
+select datetime('now', '-7 days')
+
+## Aggregate Functions (GROUP BY,COUNT,AVG,SUM,MIN,MAX,HAVING,ORDER BY)
+
+SELECT COUNT(*) FROM INVOICE_ITEMS
+
+SELECT InvoiceId,count(*) FROM INVOICE_ITEMS group by InvoiceId
+
+
+SELECT I.InvoiceId,T.Name,T.Composer,count(composer),T.TrackId,I.UnitPrice,V.CustomerId from tracks as T 
+join invoice_items as I on T.TrackId=I.TrackId 
+join invoices as V ON I.InvoiceId=V.InvoiceId group by Composer
+
+#  Using HAVING along with group by
+
+SELECT I.InvoiceId,T.Name,T.Composer,count(composer),T.TrackId,I.UnitPrice,V.CustomerId from tracks as T 
+join invoice_items as I on T.TrackId=I.TrackId 
+join invoices as V ON I.InvoiceId=V.InvoiceId group by Composer HAVING COMPOSER='AC/DC' limit 10;
+
+
+select * from tracks where composer= 'AC/DC'
+
+# Using count,avg,sum,max,min
+
+select count(*) from tracks # 3503 rows, counts all the rows including null
+select count(composer) from tracks #2525 rows, omits null values
+
+
+select sum(unitprice) from tracks;
+SELECT composer,sum(unitprice) as total FROM TRACKS group by composer order by total desc
+
+select min(unitprice) from tracks;
+select max(unitprice) from tracks
+
+# aggregating DISTINCT
+
+select COUNT(COMPOSER) from tracks; # 2525
+
+select COUNT(DISTINCT COMPOSER) from tracks # 852
+
+
+##Transactions
+
+#step 1-create table inventory3
+create table inventory3
+( id int primary key,
+  productname text(20),
+   productleft int 
+);
+
+#step 2- 
+insert into inventory3 values (1,'bat',25);
+insert into inventory3 values (2,'ball',30);
+
+
+#step 3-create table sale3
+
+
+
+create table sale3
+(id int primary key,
+productname text(20),
+productsold int)
+
+#Step 4- writing transaction
+
+
+begin transaction;
+insert into sale3 values(1,'bat',5);
+insert into sale3 values(2,'ball',2);
+update inventory3 set productleft=(productleft-5)where id=1;
+update inventory3 set productleft=(productleft-2)where id=2;
+end transaction;
+
+select * from sale3;
+select * from inventory3
+
+#step 4- Introducing Rollback to safely rollback transaction without any changes if there are any errors in the code 
+
+begin transaction;
+insert into sale3 values(1,'bat',5);
+insert into sale3 values(2,'ball',2);
+update inventory3 set productleft=(productleft-5)where id=1;
+update inventory3 set productleft=(productleft-2)where id=2;
+rollback;
+
+select * from sale3;
+select * from inventory3
+
+## Triggers
+
+
+
+
+
+
+## Subselect or SubQueries
+
+
+#In subselect Inner querry can be run independently without depending upon outside querry unline co-related or nested querry.
+
+
+select * from customers where LastName in (select LastName from employees)
+
+
+
+select distinct * from Invoices where customerId  in (select customerId from customers where BillingCountry='Brazil');
+select * from Invoices where BillingCountry='Brazil'
+
+
+
+
+
+## Creating Views
+
+
+create view TracksView as
+select TrackId,Name,Composer,Milliseconds/60000 as Min,Milliseconds % 60000 as Secs from tracks
+select * from TracksView # we can use all kind of functions just like select clause on views such as where,ordeer by,Join
+
+select * from TracksView where composer='AC/DC'
+
+
